@@ -4,10 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
+var mongoose = require('mongoose');
 var routes = require('./routes/index');
 var users = require('./routes/users');
-
+var cookieSession = require('cookie-session');
 var app = express();
 
 // view engine setup
@@ -19,11 +19,21 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+
+// Session Config
+app.use(cookieSession({
+  key: 'Chat Session',
+  secret: 'Hella secret',
+}));
 app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+app.use('/', routes, users);
+// app.use('/users', users);
+
+mongoose.connect('mongodb://localhost/nodeOauth');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
