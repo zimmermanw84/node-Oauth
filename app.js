@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Session Config
 app.use(cookieSession({
-  key: 'Chat Session',
+  key: 'Oauth Session',
   secret: 'Hella secret',
 }));
 app.use(cookieParser());
@@ -33,7 +33,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes, users);
 // app.use('/users', users);
 
-mongoose.connect('mongodb://localhost/nodeOauth');
+mongoose.connect('mongodb://localhost/nodeOauth/');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
