@@ -18,8 +18,8 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.get('/success', authUser, function(req, res, next) {
-  res.render('success');
+router.get('/success', function(req, res, next) {
+  res.render('success', { username: req.user.username, email: req.user.email, googleID: req.user.googleID });
 });
 
 

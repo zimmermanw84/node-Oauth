@@ -7,8 +7,12 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var cookieSession = require('cookie-session');
+// var cookieSession = require('cookie-session');
+var session = require('express-session');
 var app = express();
+
+var passport = require('passport');
+var passportConfig = require('./config/passport');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -20,13 +24,24 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// Google Oauth
+app.set(passportConfig(passport));
+
 
 // Session Config
-app.use(cookieSession({
-  key: 'Oauth Session',
-  secret: 'Hella secret',
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false
 }));
+
+app.use(passport.initialize());
 app.use(cookieParser());
+app.use(passport.session());
+// app.use(cookieSession({
+//   key: 'Oauth Session',
+//   secret: 'Hella secret',
+// }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 

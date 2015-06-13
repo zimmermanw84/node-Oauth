@@ -6,6 +6,12 @@
   </head>
   <body>
     <h1>Congrats You made it :)</h1>
+    <h2>Profile</h2>
+    <ul>
+      <li>Username: <%= username %></li>
+      <li>Email: <%= email %></li>
+      <li>GoogleID: <%= googleID %></li>
+    </ul>
 
     <form action="/users/logout" method="post">
       <button>Log Out</button>
