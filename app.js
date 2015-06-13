@@ -24,11 +24,12 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Google Oauth
+// Google Oauth Config
 app.set(passportConfig(passport));
 
 
 // Session Config
+app.use(cookieParser());
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
@@ -36,7 +37,6 @@ app.use(session({
 }));
 
 app.use(passport.initialize());
-app.use(cookieParser());
 app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));

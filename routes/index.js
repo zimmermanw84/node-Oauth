@@ -4,21 +4,14 @@ var router = express.Router();
 var User = require('../models/users');
 /* GET home page. */
 
-// Simple auth
-var authUser = function(req, res, next) {
-  if (!req.session.user) {
-    res.redirect('/');
-  } else {
-    next();
-  }
-};
-
 router.get('/', function(req, res, next) {
   // console.log("User MODEL", models);
   res.render('index', { title: 'Express' });
 });
 
 router.get('/success', function(req, res, next) {
+  if (!req.user) res.redirect('/');
+
   res.render('success', {
     username: req.user.username,
     email: req.user.email,
