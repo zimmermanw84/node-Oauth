@@ -19,7 +19,12 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/success', function(req, res, next) {
-  res.render('success', { username: req.user.username, email: req.user.email, googleID: req.user.googleID });
+  res.render('success', {
+    username: req.user.username,
+    email: req.user.email,
+    googleID: req.user.googleID,
+    img: req.user.img
+  });
 });
 
 

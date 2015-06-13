@@ -38,10 +38,6 @@ app.use(session({
 app.use(passport.initialize());
 app.use(cookieParser());
 app.use(passport.session());
-// app.use(cookieSession({
-//   key: 'Oauth Session',
-//   secret: 'Hella secret',
-// }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 

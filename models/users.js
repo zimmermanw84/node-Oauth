@@ -8,5 +8,6 @@ module.exports = mongoose.model('User', new Schema({
   email: String,
   googleToken: String,
   googleID: Number,
+  img: String
 
 }));
