@@ -44,7 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes, users);
 // app.use('/users', users);
 
-mongoose.connect('mongodb://192.169.0.5/' || 'mongodb://localhost/nodeOauth/');
+mongoose.connect('mongodb://localhost/nodeOauth/');
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
