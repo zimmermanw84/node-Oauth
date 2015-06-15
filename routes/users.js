@@ -2,12 +2,19 @@ var express = require('express');
 var passport = require('passport');
 var router = express.Router();
 var User = require('../models/users');
+var ping = require('../ping');
 
 router.get('/users', function(req, res, next) {
-  // Will send JSON for fun. Not really needed. Just for testing
-  // console.log('AUTH TOKENS', googleInfo);
-  console.log("PROCESS", process.nextTick);
-  res.send('respond with a resource');
+
+  User.find({}, function(err, users) {
+    var userMap = {};
+
+    users.forEach(function(user) {
+      userMap[user._id] = user;
+    });
+
+    res.send( JSON.stringify(userMap) );
+  });
 });
 
 router.post('/users', function(req, res) {
@@ -44,8 +51,15 @@ router.post('/users/logout', function(req, res) {
 // send to google to do the authentication
 // profile gets us their basic information including their name
 // email gets their emails
-router.post('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'],approvalPrompt: 'force' }
-));
+router.post('/auth/google', passport.authenticate('google', {
+    scope : ['profile', 'email'],
+    approvalPrompt: 'force'
+  }),
+  function(req, res, next) {
+    console.log("RESPONSE USER", res.user)
+    console.log("RESPONSE STATUS", res.status)
+  }
+);
 
 // the callback after google has authenticated the user
 router.get('/auth/google/callback',

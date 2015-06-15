@@ -14,8 +14,6 @@ var app = express();
 var passport = require('passport');
 var passportConfig = require('./config/passport');
 
-// ping API test
-var ping = require('./ping');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

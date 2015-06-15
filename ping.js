@@ -1,8 +1,9 @@
 var yelpConfig = require("./config/auth").yelpAuth;
 var mongoose = require('mongoose');
 var Restaurant = require('./models/restaurants');
+var http = require('http');
 
-mongoose.connect('mongodb://localhost/restaurants/');
+// mongoose.connect('mongodb://localhost/restaurants/');
 
 var yelp = require("yelp").createClient({
   consumer_key: yelpConfig.consumerKey,
@@ -50,26 +51,28 @@ var scrape = function(data) {
   var data = JSON.stringify(data);
   try {
     for (var i = 0; i < data.businesses.length; i++) {
-          newRest = new Restaurant({
-            name: data.businesses.name,
-            phone: data.businesses.phone,
-            rating: data.businesses.rating,
-            snippetText: data.businesses.snippet_text,
-            imageUrl: businesses.image_url
-          });
-          console.log("REST:", newRest);
-          newRest.save(function(err, rest) {
-            if (err) console.log(err);
-            console.log("REST", rest);
-          });
+      newRest = new Restaurant({
+        name: data.businesses.name,
+        phone: data.businesses.phone,
+        rating: data.businesses.rating,
+        snippetText: data.businesses.snippet_text,
+        imageUrl: businesses.image_url
+      });
+
+      console.log("REST:", newRest);
+      newRest.save(function(err, rest) {
+        if (err) console.log(err);
+        console.log("REST", rest);
+      });
     }
   }
   catch(e) { console.log("ERROR", e); }
-}
+};
 
 var apiCall = function(term, location, callback, logger) {
   yelp.search({term: 'restaurants ' + term, location: location}, function(error, data) {
-    // if (error) throw "API ERROR!: " + console.log(error);
+    if (!data) return;
+
     try {
       callback(data);
       logger(data);
@@ -77,10 +80,33 @@ var apiCall = function(term, location, callback, logger) {
   });
 };
 
-module.exports = function() {
-  for (place in LOCATIONS) {
-    for (stuff in TERMS) {
-      apiCall(stuff, place, scrape, apiLogger);
-    }
+// Make API call to yelp
+for (place in LOCATIONS) {
+  for (stuff in TERMS) {
+    apiCall(stuff, place, scrape, apiLogger);
+  }
+};
+
+// GET all USERS from ec2
+var getUsers = function() {
+
+  var options = {
+    host: '52.26.126.153',
+    port: 80,
+    path: '/users'
   };
+
+
+  http.get(options, function(response) {
+    console.log("STATUS: ", response.statusCode);
+    response.setEncoding('utf8');
+    response.on("data", function(chunk) {
+      console.log("Response BODY: ", chunk);
+    });
+  }).on('error', function(err) {
+    console.log("ERROR: ", err);
+  });
+
 }
+
+// getUsers();
