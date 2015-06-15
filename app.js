@@ -5,7 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var routes = require('./routes/index');
+var index = require('./routes/index');
 var users = require('./routes/users');
 // var cookieSession = require('cookie-session');
 var session = require('express-session');
@@ -14,6 +14,8 @@ var app = express();
 var passport = require('passport');
 var passportConfig = require('./config/passport');
 
+// ping API test
+var ping = require('./ping');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -41,8 +43,7 @@ app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes, users);
-// app.use('/users', users);
+app.use('/', index, users);
 
 mongoose.connect('mongodb://localhost/nodeOauth/');
 

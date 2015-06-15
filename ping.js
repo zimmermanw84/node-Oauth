@@ -1,6 +1,6 @@
 var yelpConfig = require("./config/auth").yelpAuth;
 var mongoose = require('mongoose');
-var Restaurant = require('./models/restaurants.js');
+var Restaurant = require('./models/restaurants');
 
 mongoose.connect('mongodb://localhost/restaurants/');
 
@@ -47,6 +47,7 @@ var apiLogger = function(data) {
 
 var scrape = function(data) {
   var newRest;
+  var data = JSON.stringify(data);
   try {
     for (var i = 0; i < data.businesses.length; i++) {
           newRest = new Restaurant({
@@ -69,16 +70,17 @@ var scrape = function(data) {
 var apiCall = function(term, location, callback, logger) {
   yelp.search({term: 'restaurants ' + term, location: location}, function(error, data) {
     // if (error) throw "API ERROR!: " + console.log(error);
-    callback(data);
-    logger(data);
+    try {
+      callback(data);
+      logger(data);
+    } catch(e) { console.log("ERROR: ", e) }
   });
 };
 
-for (place in LOCATIONS) {
-  for (stuff in TERMS) {
-    // setTimeout(function() {
-      // apiCall(stuff, place, apiLogger);
+module.exports = function() {
+  for (place in LOCATIONS) {
+    for (stuff in TERMS) {
       apiCall(stuff, place, scrape, apiLogger);
-    // }, 1000)
-  }
-};
+    }
+  };
+}
