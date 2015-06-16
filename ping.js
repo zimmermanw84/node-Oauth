@@ -3,7 +3,20 @@ var mongoose = require('mongoose');
 var Restaurant = require('./models/restaurants');
 var http = require('http');
 
-// mongoose.connect('mongodb://localhost/restaurants/');
+mongoose.connection.on('connected', function() {
+  console.log('CONNECTED');
+})
+
+mongoose.connect('mongodb://127.0.0.1:27017/nodeOauth');
+
+var gracefulExit = function() {
+  mongoose.connection.close(function () {
+    console.log('Mongoose default connection with DB is disconnected through app termination');
+    process.exit(0);
+  });
+};
+
+process.on('SIGINT', gracefulExit).on('SIGTERM', gracefulExit);
 
 var yelp = require("yelp").createClient({
   consumer_key: yelpConfig.consumerKey,
@@ -38,7 +51,6 @@ var apiLogger = function(data) {
       console.log("Phone: ", data.businesses[i].phone);
       console.log("Rating: ", data.businesses[i].rating);
       console.log("Snippet: ", data.businesses[i].snippet_text);
-      (data.businesses[i].image_url);
     }
   }
   catch(e) {
@@ -47,43 +59,44 @@ var apiLogger = function(data) {
 };
 
 var scrape = function(data) {
-  var newRest;
-  var data = JSON.stringify(data);
+  // var newRest;
+  // console.log("DATA", data);
   try {
     for (var i = 0; i < data.businesses.length; i++) {
-      newRest = new Restaurant({
-        name: data.businesses.name,
-        phone: data.businesses.phone,
-        rating: data.businesses.rating,
-        snippetText: data.businesses.snippet_text,
-        imageUrl: businesses.image_url
+
+      var rest = new Restaurant({
+        name: data.businesses[i].name,
+        phone: data.businesses[i].phone,
+        rating: data.businesses[i].rating,
+        snippetText: data.businesses[i].snippet_text,
+        imageUrl: data.businesses[i].image_url
       });
 
-      console.log("REST:", newRest);
-      newRest.save(function(err, rest) {
+      rest.save(function(err, rest) {
         if (err) console.log(err);
         console.log("REST", rest);
       });
     }
-  }
-  catch(e) { console.log("ERROR", e); }
+  } catch(e) { console.log("ERROR", e); }
 };
 
 var apiCall = function(term, location, callback, logger) {
   yelp.search({term: 'restaurants ' + term, location: location}, function(error, data) {
-    if (!data) return;
+    if (error) console.log(error);
 
     try {
-      callback(data);
-      logger(data);
+        callback(data);
+      // logger(data);
     } catch(e) { console.log("ERROR: ", e) }
   });
 };
 
 // Make API call to yelp
-for (place in LOCATIONS) {
-  for (stuff in TERMS) {
-    apiCall(stuff, place, scrape, apiLogger);
+var go = function() {
+  for (place in LOCATIONS) {
+    for (stuff in TERMS) {
+      apiCall(stuff, place, scrape, apiLogger);
+    }
   }
 };
 
@@ -107,6 +120,7 @@ var getUsers = function() {
     console.log("ERROR: ", err);
   });
 
-}
+};
 
 // getUsers();
+go();

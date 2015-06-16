@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var index = require('./routes/index');
 var users = require('./routes/users');
+var rest = require('./routes/restaurants');
 // var cookieSession = require('cookie-session');
 var session = require('express-session');
 var app = express();
@@ -41,9 +42,18 @@ app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index, users);
+app.use('/', index, users, rest);
 
-mongoose.connect('mongodb://localhost/nodeOauth/');
+mongoose.connect('mongodb://127.0.0.1/nodeOauth/');
+
+var gracefulExit = function() {
+  mongoose.connection.close(function () {
+    console.log('Mongoose default connection with DB is disconnected through app termination');
+    process.exit(0);
+  });
+}
+
+process.on('SIGINT', gracefulExit).on('SIGTERM', gracefulExit);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
