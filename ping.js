@@ -11,7 +11,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/nodeOauth');
 
 var gracefulExit = function() {
   mongoose.connection.close(function () {
-    console.log('Mongoose default connection with DB is disconnected through app termination');
+    console.log('\nMongoose default connection with DB is disconnected through app termination');
     process.exit(0);
   });
 };
@@ -93,8 +93,8 @@ var apiCall = function(term, location, callback, logger) {
 
 // Make API call to yelp
 var go = function() {
-  for (place in LOCATIONS) {
-    for (stuff in TERMS) {
+  for (var place in LOCATIONS) {
+    for (var stuff in TERMS) {
       apiCall(stuff, place, scrape, apiLogger);
     }
   }
@@ -110,7 +110,7 @@ var getUsers = function() {
   };
 
 
-  http.get(options, function(response) {
+  var req = http.get(options, function(response) {
     console.log("STATUS: ", response.statusCode);
     response.setEncoding('utf8');
     response.on("data", function(chunk) {
@@ -120,7 +120,8 @@ var getUsers = function() {
     console.log("ERROR: ", err);
   });
 
+  req.end();
 };
 
-// getUsers();
-go();
+getUsers();
+// go();

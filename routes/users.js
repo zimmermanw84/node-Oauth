@@ -2,7 +2,6 @@ var express = require('express');
 var passport = require('passport');
 var router = express.Router();
 var User = require('../models/users');
-var Rest = require('../models/restaurants');
 
 router.get('/users', function(req, res, next) {
 
