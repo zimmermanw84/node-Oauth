@@ -48,7 +48,7 @@ mongoose.connect('mongodb://127.0.0.1/nodeOauth/');
 
 var gracefulExit = function() {
   mongoose.connection.close(function () {
-    console.log('Mongoose default connection with DB is disconnected through app termination');
+    console.log('\nMongoose default connection with DB is disconnected through app termination');
     process.exit(0);
   });
 }
